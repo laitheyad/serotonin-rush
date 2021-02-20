@@ -1,0 +1,12 @@
+{
+  "name": "Serotonin-Rush",
+  "displayName": "Serotonin-Rush",
+  "expo": {
+    "name": "Serotonin-Rush",
+    "slug": "Serotonin-Rush",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
