@@ -185,7 +185,7 @@ export default class extends Component {
         </View>
         <TouchableOpacity
           onPress={() => {
-            this.props.navigation.navigate("Login");
+            this.props.navigation.navigate("Home");
           }}
           style={styles.back_button}
         >

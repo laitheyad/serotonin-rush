@@ -57,7 +57,7 @@ export default class Login extends React.Component {
       useNativeDriver: false,
     }).start(() => {
       setTimeout(() => {
-        this.props.navigation.navigate("AddMeal");
+        this.props.navigation.navigate("Home");
       }, 1500);
     });
 

@@ -6,11 +6,16 @@ import Login from "./src/pages/login";
 import MainPage from "./src/pages/profile";
 import AddMeal from "./src/pages/Add_meal";
 import CreateMeal from "./src/pages/create_meal";
+import Home from "./src/pages/home";
+
 const MainNavigator = createDrawerNavigator({
   Login: {
     screen: Login,
   },
-  profile: {
+  Home: {
+    screen: Home,
+  },
+  Profile: {
     screen: MainPage,
   },
   AddMeal: {
