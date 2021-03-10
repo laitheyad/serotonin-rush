@@ -18,7 +18,7 @@ import { showMessage, hideMessage } from "react-native-flash-message";
 import FlashMessage from "react-native-flash-message";
 import Context from "../context/globalSettings";
 import DropdownAlert from "react-native-dropdownalert";
-
+import Navigation from "../components/navigation";
 export default class Login extends React.Component {
   constructor(props) {
     super(props);
@@ -57,7 +57,7 @@ export default class Login extends React.Component {
       useNativeDriver: false,
     }).start(() => {
       setTimeout(() => {
-        this.props.navigation.navigate("Home");
+        this.props.navigation.navigate("MainNavigator");
       }, 1500);
     });
 
@@ -105,6 +105,7 @@ export default class Login extends React.Component {
         if (response.message === "success") {
           isloggedin = true;
           await AsyncStorage.setItem("isloggedIn", "true");
+          console.log("im here");
           Context._currentValue.token = response.token;
           Context._currentValue.user_info = response.user_obj;
           Context._currentValue.username = response.username;

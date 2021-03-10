@@ -2,10 +2,7 @@ import React, { Component, Fragment } from "react";
 import { View, StyleSheet, Animated, Text, Dimensions } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { Icon } from "react-native-elements";
-import {
-  TouchableHighlight,
-  TouchableWithoutFeedback,
-} from "react-native-gesture-handler";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 const defaultState = {
   height: 110,
   width: 110,

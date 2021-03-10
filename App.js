@@ -1,30 +1,18 @@
 import React, { Component } from "react";
+import { AsyncStorage } from "react-native";
+import Navigator from "./src/components/navigation";
+// import { createAppContainer, createSwitchNavigator } from "react-navigation";
 import { createAppContainer } from "react-navigation";
-import { createDrawerNavigator } from "react-navigation-drawer";
 
-import Login from "./src/pages/login";
-import MainPage from "./src/pages/profile";
-import AddMeal from "./src/pages/Add_meal";
-import CreateMeal from "./src/pages/create_meal";
-import Home from "./src/pages/home";
-
-const MainNavigator = createDrawerNavigator({
-  Login: {
-    screen: Login,
-  },
-  Home: {
-    screen: Home,
-  },
-  Profile: {
-    screen: MainPage,
-  },
-  AddMeal: {
-    screen: AddMeal,
-  },
-  CreateMeal: {
-    screen: CreateMeal,
-  },
-});
-const App = createAppContainer(MainNavigator);
-
-export default App;
+export default class App extends React.Component {
+  state = { signedin: false };
+  async componentDidMount() {
+    let isloggedIn = await AsyncStorage.getItem("isloggedIn");
+    console.log("logg", isloggedIn);
+    this.setState({ signedin: isloggedIn });
+  }
+  render() {
+    const Nav = createAppContainer(Navigator(this.state.signedin));
+    return <Nav />;
+  }
+}
