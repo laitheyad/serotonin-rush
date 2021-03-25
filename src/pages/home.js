@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   FlatList,
   Animated,
+  RefreshControl,
 } from "react-native";
 import { Icon } from "react-native-elements";
 import News from "../components/news";
@@ -19,6 +20,7 @@ import Context from "../context/globalSettings";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
+
 const pages = [
   // { title: "Home", icon: "home", page: "Home" },
   { title: "Profile", icon: "fingerprint", page: "Profile" },
@@ -42,7 +44,9 @@ const defaultState = {
   },
   token: "",
   news: [],
+  isRefresh: false,
 };
+
 export default class extends Component {
   constructor(props) {
     super(props);
@@ -56,6 +60,11 @@ export default class extends Component {
         this.setState({ news: response });
       });
   }
+  async _onRefresh() {
+    this.setState({ isFetching: true });
+    await this.getNews();
+    this.setState({ isFetching: false });
+  }
   async componentDidMount() {
     this.getNews();
     isCustomer = await AsyncStorage.getItem("isCustomer");
@@ -67,6 +76,7 @@ export default class extends Component {
       });
     }
   }
+
   render() {
     return (
       <SafeAreaView style={styles.page}>
@@ -123,7 +133,9 @@ export default class extends Component {
                 <Card title={item.title} icon={item.icon} />
               </TouchableOpacity>
             )}
-            keyExtractor={(item) => item.title}
+            keyExtractor={(item) =>
+              Math.floor(Math.random() * 99999).toString()
+            }
             horizontal={true}
             style={{
               alignSelf: "center",
@@ -146,6 +158,12 @@ export default class extends Component {
             alignSelf: "center",
             width: "95%",
           }}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.isRefresh}
+              onRefresh={() => this._onRefresh()}
+            />
+          }
         />
       </SafeAreaView>
     );

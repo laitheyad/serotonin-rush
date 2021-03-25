@@ -11,5 +11,5 @@ export default React.createContext({
   },
   username: "",
   token: "",
-  ApiUrl: "http://192.168.1.11:8000",
+  ApiUrl: "https://serotonin-rush.herokuapp.com",
 });

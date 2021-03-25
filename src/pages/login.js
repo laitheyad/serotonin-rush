@@ -74,7 +74,7 @@ export default class Login extends React.Component {
     var formdata = new FormData();
     // formdata.append("username", this.state.username);
     // formdata.append("password", this.state.password);
-    formdata.append("username", "laith");
+    formdata.append("username", "testuser");
     formdata.append("password", "laith@31");
     var requestOptions = {
       method: "POST",
