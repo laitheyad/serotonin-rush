@@ -4,8 +4,8 @@ import LinearGradient from "react-native-linear-gradient";
 import { Icon } from "react-native-elements";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 const defaultState = {
-  height: 110,
-  width: 110,
+  height: 90,
+  width: 90,
 };
 
 export default class extends Component {
@@ -35,7 +35,7 @@ export default class extends Component {
           <View style={{ flexDirection: "column" }}>
             <Icon
               name={this.props.icon}
-              size={40}
+              size={34}
               type="Materialicons"
               container
               color={"#ffffff"}
@@ -58,8 +58,8 @@ var styles = StyleSheet.create({
   title: {
     textAlign: "center",
     justifyContent: "center",
-    marginTop: 10,
-    fontSize: 18,
+    marginTop: -2,
+    fontSize: 14,
     color: "#FFFF",
     // fontWeight: "bold",
   },

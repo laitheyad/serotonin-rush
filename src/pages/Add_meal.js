@@ -111,7 +111,6 @@ export default class extends Component {
     )
       .then((response) => response.text())
       .then(async (result) => {
-        console.log(result);
         let response = await JSON.parse(result);
         this.dropDownAlertRef.alertWithType(
           "success",

@@ -218,7 +218,7 @@ export default class extends Component {
               <Image
                 source={{
                   uri:
-                    Context._currentValue.ApiUrl + +this.state.user_info.avatar,
+                    Context._currentValue.ApiUrl + this.state.user_info.avatar,
                 }}
                 style={styles.avatar}
               />

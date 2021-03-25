@@ -9,8 +9,8 @@ import {
   Animated,
   Dimensions,
   TouchableOpacity,
-  AsyncStorage,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TypingAnimation } from "react-native-typing-animation";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import * as Animatable from "react-native-animatable";
@@ -18,7 +18,6 @@ import { showMessage, hideMessage } from "react-native-flash-message";
 import FlashMessage from "react-native-flash-message";
 import Context from "../context/globalSettings";
 import DropdownAlert from "react-native-dropdownalert";
-import Navigation from "../components/navigation";
 export default class Login extends React.Component {
   constructor(props) {
     super(props);
@@ -69,22 +68,7 @@ export default class Login extends React.Component {
       });
     }, 150);
   }
-  async componentDidMount() {
-    let user_data = await Context._currentValue.user_info.username;
-    console.log("context value is : ", user_data);
-    let isloggedIn;
-    try {
-      isloggedIn = await AsyncStorage.getItem("isloggedIn");
-    } catch (err) {
-      console.log(err);
-    }
-    isloggedIn === "true"
-      ? console.log(
-          "the user is logged in ",
-          await AsyncStorage.getItem("token")
-        )
-      : console.log("you need to login");
-  }
+  async componentDidMount() {}
   async _login() {
     let isloggedin = false;
     var formdata = new FormData();
@@ -97,7 +81,6 @@ export default class Login extends React.Component {
       body: formdata,
       redirect: "follow",
     };
-    // this.props.navigation.navigate("profile");
     await fetch(Context._currentValue.ApiUrl + "/API/login/", requestOptions)
       .then((response) => response.text())
       .then(async (result) => {
@@ -105,11 +88,13 @@ export default class Login extends React.Component {
         if (response.message === "success") {
           isloggedin = true;
           await AsyncStorage.setItem("isloggedIn", "true");
-          console.log("im here");
+
+          await AsyncStorage.setItem("token", response.token);
+
+          await AsyncStorage.setItem("isCustomer", response.user_obj.status);
           Context._currentValue.token = response.token;
           Context._currentValue.user_info = response.user_obj;
           Context._currentValue.username = response.username;
-
           showMessage({
             message: "Logged in seccessfuly",
             style: {

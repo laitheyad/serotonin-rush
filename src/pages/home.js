@@ -1,18 +1,14 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import {
   View,
   StyleSheet,
   SafeAreaView,
   Image,
-  ImageBackground,
   Text,
-  StatusBar,
   Dimensions,
   TouchableOpacity,
   FlatList,
   Animated,
-  KeyboardAvoidingView,
-  AsyncStorage,
 } from "react-native";
 import { Icon } from "react-native-elements";
 import News from "../components/news";
@@ -20,7 +16,7 @@ import LinearGradient from "react-native-linear-gradient";
 import Card from "../components/card";
 import { ScrollView } from "react-native-gesture-handler";
 import Context from "../context/globalSettings";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
 const pages = [
@@ -57,12 +53,19 @@ export default class extends Component {
       .then((response) => response.text())
       .then(async (result) => {
         let response = await JSON.parse(result);
-        console.log(response);
         this.setState({ news: response });
       });
   }
-  componentDidMount() {
+  async componentDidMount() {
     this.getNews();
+    isCustomer = await AsyncStorage.getItem("isCustomer");
+    if (isCustomer === "Customer") {
+      pages.push({
+        title: "Add requet",
+        icon: "playlist-add",
+        page: "Approv",
+      });
+    }
   }
   render() {
     return (
@@ -126,24 +129,24 @@ export default class extends Component {
               alignSelf: "center",
               width: "95%",
             }}
-            // extraData={selectedId}
           />
         </View>
-        <ScrollView style={{ borderRadius: 25 }}>
-          <FlatList
-            data={this.state.news}
-            renderItem={({ item }) => (
-              <News title={item.title} body={item.body} url={item.url} />
-            )}
-            keyExtractor={(item) => item.pk}
-            style={{
-              alignSelf: "center",
-              width: "95%",
-            }}
-            // extraData={selectedId}
-          />
-        </ScrollView>
-        {/* <View style={styles.header}></View> */}
+        <FlatList
+          data={this.state.news}
+          renderItem={({ item }) => (
+            <News
+              title={item.title}
+              body={item.body}
+              url={item.url}
+              image={item.image}
+            />
+          )}
+          keyExtractor={(item) => Math.floor(Math.random() * 99999).toString()}
+          style={{
+            alignSelf: "center",
+            width: "95%",
+          }}
+        />
       </SafeAreaView>
     );
   }
