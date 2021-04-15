@@ -88,7 +88,6 @@ export default class extends Component {
     });
   }
   componentDidMount() {
-    console.log("profile context is : ", Context._currentValue);
     const { navigation } = this.props;
     navigation.addListener("willFocus", () => this._getInfo());
   }

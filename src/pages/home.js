@@ -68,12 +68,24 @@ export default class extends Component {
   async componentDidMount() {
     this.getNews();
     isCustomer = await AsyncStorage.getItem("isCustomer");
-    if (isCustomer === "Customer") {
-      pages.push({
+    let flag = false;
+    if (isCustomer !== "Customer") {
+      page = {
         title: "Add requet",
         icon: "playlist-add",
         page: "Approv",
-      });
+      };
+      for (i = 0; i < pages.length; i++) {
+        if (pages[i] === page) {
+          flag = false;
+        }
+      }
+      if (!flag)
+        pages.push({
+          title: "Add requet",
+          icon: "playlist-add",
+          page: "Approv",
+        });
     }
   }
 

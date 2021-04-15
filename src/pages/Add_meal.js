@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import SearchableDropdown from "react-native-searchable-dropdown";
 import { Rating, AirbnbRating } from "react-native-ratings";
+import AnimatedLoader from "react-native-animated-loader";
 
 import * as Animatable from "react-native-animatable";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -49,6 +50,7 @@ const defaultState = {
   ],
   meals: [],
   rating: 0,
+  isLoading: false,
 };
 
 export default class extends Component {
@@ -122,6 +124,7 @@ export default class extends Component {
     this._animation();
   }
   async _getMeals() {
+    this.setState({ isLoading: true });
     var header = new Headers();
     header.append("Authorization", "Token " + Context._currentValue.token);
     var requestOptions = {
@@ -140,7 +143,7 @@ export default class extends Component {
         for (let i = 0; i < response.length; i++) {
           array.push({ id: response[i].pk, name: response[i].name });
         }
-        this.setState({ meals: array });
+        this.setState({ meals: array, isLoading: false });
       });
   }
   render() {
@@ -167,9 +170,28 @@ export default class extends Component {
                 color={"#ffffff"}
               />
             </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                this._getMeals();
+              }}
+              style={styles.refresh_button}
+            >
+              <Icon
+                name="refresh"
+                size={26}
+                type="Ionicons"
+                container
+                color={"#ffffff"}
+              />
+            </TouchableOpacity>
           </ImageBackground>
         </View>
-
+        <AnimatedLoader
+          visible={this.state.isLoading}
+          overlayColor="rgba(255,255,255,0.75)"
+          source={require("../components/animation/lovely-loading.json")}
+          speed={1}
+        ></AnimatedLoader>
         <View style={styles.profile_container}>
           <View style={styles.avatar_container}>
             <Text
@@ -400,6 +422,17 @@ const styles = StyleSheet.create({
     margin: 10,
     top: 0,
     left: 0,
+    width: 40,
+    height: 40,
+    position: "absolute",
+    backgroundColor: "rgba(101, 27, 98,0.6)",
+    borderRadius: 40,
+    justifyContent: "center",
+  },
+  refresh_button: {
+    margin: 10,
+    top: 0,
+    right: 0,
     width: 40,
     height: 40,
     position: "absolute",

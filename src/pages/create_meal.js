@@ -203,7 +203,7 @@ export default class extends Component {
                   // colors={["rgba(161, 43, 157,0.9)", "rgba(201, 54, 197,0.9)"]}
                   colors={["#ffffff", "#FFFFFF"]}
                 >
-                  <View style={[styles.info_card, { maxHeight: 370 }]}>
+                  <View style={[styles.info_card]}>
                     <ScrollView>
                       <View style={styles.card_title_row_container}>
                         <Text style={styles.card_title}>Meal Name</Text>
@@ -406,7 +406,7 @@ const styles = StyleSheet.create({
   info_card: {
     width: width - 25,
     // height: height / 2.5,
-    marginTop: -50,
+    marginTop: -30,
     borderRadius: 20,
     padding: 20,
   },

@@ -5,7 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createAppContainer } from "react-navigation";
 import Context from "./src/context/globalSettings";
 import AnimatedSplash from "./src/components/animated-splash";
-
+import { ModalPortal } from 'react-native-modals';
 export default class App extends React.Component {
   state = { signedin: false, isLoading: true, token: "" };
   async componentDidMount() {
@@ -42,7 +42,7 @@ export default class App extends React.Component {
           }
           setTimeout(() => {
             this.setState({ isLoading: false });
-          }, 3500);
+          }, 0);
         });
     } else {
       this.setState({ isLoading: false });
@@ -63,7 +63,10 @@ export default class App extends React.Component {
         logoWidth={400}
       />
     ) : (
+      <>
+      <ModalPortal />
       <Nav />
+     </> 
     );
   }
 }

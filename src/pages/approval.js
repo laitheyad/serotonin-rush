@@ -1,30 +1,27 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import {
   View,
   StyleSheet,
   SafeAreaView,
-  Image,
-  ImageBackground,
   Text,
   StatusBar,
   Dimensions,
   TouchableOpacity,
-  TextInput,
   Animated,
-  KeyboardAvoidingView,
-  AsyncStorage,
+  FlatList,
+  RefreshControl,
+  Modal,
+  Image,
 } from "react-native";
-import SearchableDropdown from "react-native-searchable-dropdown";
-import { Rating, AirbnbRating } from "react-native-ratings";
-
-import * as Animatable from "react-native-animatable";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Context from "../context/globalSettings";
 import { Icon } from "react-native-elements";
-import common_styles from "../components/settings";
 import DropdownAlert from "react-native-dropdownalert";
-import { ScrollView } from "react-native-gesture-handler";
+// import { Modal, ModalContent,ModalTitle,SlideAnimation } from 'react-native-modals';
+import AnimatedLoader from "react-native-animated-loader";
+import LottieView from "lottie-react-native";
 
+import MealtItem from "../components/mealsItem";
+import { ScrollView } from "react-native-gesture-handler";
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
 const defaultState = {
@@ -42,6 +39,11 @@ const defaultState = {
     recipe: "",
   },
   token: "",
+  selected_meal: {},
+  modal_visiblity: false,
+  isRefresh: false,
+  isLoading: false,
+  isEmpty: false,
 };
 
 export default class extends Component {
@@ -49,76 +51,43 @@ export default class extends Component {
     super(props);
     this.state = { ...defaultState };
   }
-
-  _animation() {
-    Animated.timing(this.state.animation_login, {
-      toValue: 200,
-      duration: 250,
-      useNativeDriver: false,
-    }).start(() => {
-      // setTimeout(() => {
-      // this.props.navigation.navigate("Login");
-      // this.setState({
-      // ...defaultState,
-      // });
-      // }, 1500);
-    });
-
-    setTimeout(() => {
-      this.setState({
-        enable: false,
-      });
-    }, 150);
-  }
-
   componentDidMount() {
     this._getInfo();
-    // const { navigation } = this.props;
-    // navigation.addListener("willFocus", () => this._getInfo());
   }
+  async _changeMealStatus(state) {
+    this.setState({ isLoading: true });
 
-  async _Save() {
-    this.dropDownAlertRef.alertWithType(
-      "success",
-      "Success",
-      "The meal has been add, Waiting for the Nutritionist approval."
-    );
-
-    // let selected = this.state.selectedItems;
-    // let items = [];
-    // for (let i = 0; i < selected.length; i++) {
-    //   await items.push(selected[i].id);
-    // }
-
-    // let header = new Headers();
-    // let form = new FormData();
-    // form.append("username", Context._currentValue.username);
-    // form.append("reaction", this.state.rating);
-    // var arr = await JSON.stringify(items);
-    // form.append("meals", arr);
-
-    // // header.append("Authorization", "Token " + Context._currentValue.token);
-    // var requestOptions = {
-    //   method: "POST",
-    //   // headers: header,
-    //   body: form,
-    //   redirect: "follow",
-    // };
-    // await fetch("http://192.168.43.72:8000/API/add_reaction/", requestOptions)
-    //   .then((response) => response.text())
-    //   .then(async (result) => {
-    //     console.log(result);
-    //     let response = await JSON.parse(result);
-    //     this.dropDownAlertRef.alertWithType(
-    //       "success",
-    //       "Success",
-    //       "The meal has been add, Waiting for Nutirtion approval :)"
-    //     );
-    //   });
-
-    this._animation();
+    let header = new Headers();
+    let form = new FormData();
+    form.append("pk", this.state.selected_meal.id);
+    form.append("state", state);
+    header.append("Authorization", "Token " + Context._currentValue.token);
+    var requestOptions = {
+      method: "POST",
+      headers: header,
+      body: form,
+      redirect: "follow",
+    };
+    await fetch(
+      Context._currentValue.ApiUrl + "/change_meal_status/",
+      requestOptions
+    )
+      .then((response) => response.text())
+      .then(async (result) => {
+        let response = await JSON.parse(result);
+        this.dropDownAlertRef.alertWithType(
+          state === "Approved" ? "success" : "fail",
+          state === "Approved" ? "Approved" : "Rejected",
+          state === "Approved"
+            ? "This meal has been Approved, Thank You for being helpful"
+            : "This meal has been Rejected, Thank You for being helpful"
+        );
+      });
+    this.setState({ modal_visiblity: false });
+    this._Onrefresh();
   }
   async _getInfo() {
+    this.setState({ isLoading: true });
     var header = new Headers();
     header.append("Authorization", "Token " + Context._currentValue.token);
     var requestOptions = {
@@ -127,59 +96,208 @@ export default class extends Component {
       redirect: "follow",
     };
     await fetch(
-      Context._currentValue.ApiUrl + "/API/all_meals/",
+      Context._currentValue.ApiUrl + "/pending_meals/",
       requestOptions
     )
       .then((response) => response.text())
       .then(async (result) => {
         let response = await JSON.parse(result);
-        let array = [];
-        for (let i = 0; i < response.length; i++) {
-          array.push({ id: response[i].pk, name: response[i].name });
-        }
-        this.setState({ meals: array });
+        if (response.pending_meals.length === 0)
+          this.setState({ isEmpty: true });
+        this.setState({ meals: response.pending_meals, isLoading: false });
       });
+  }
+  get_meal_by_pk(pk) {
+    let meal = this.state.meals.filter((item) => item.id == pk);
+    meal[0].recipe = meal[0].recipe.replace(/,/g, "\n");
+    this.setState({ selected_meal: meal[0], modal_visiblity: true });
+  }
+  async _Onrefresh() {
+    this.setState({ onRefresh: true, isLoading: true });
+    await this._getInfo();
+    this.setState({ onRefresh: false, isLoading: false });
   }
   render() {
     const button_width = this.state.animation_login;
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={{ height: "102%", backgroundColor: "#FFF" }}>
         <StatusBar barStyle="light-content" />
-        <View style={styles.header}>
-          <ImageBackground
-            source={require("../img/header.png")}
-            style={styles.imageBackground}
-          >
-            <TouchableOpacity
-              onPress={() => {
-                this.props.navigation.navigate("Home");
-              }}
-              style={styles.back_button}
-            >
-              <Icon
-                name="arrow-back"
-                size={26}
-                type="Ionicons"
-                container
-                color={"#ffffff"}
-              />
-            </TouchableOpacity>
-          </ImageBackground>
-        </View>
 
-        <View style={styles.profile_container}>
-          <View style={styles.avatar_container}>
-            <Image
-              source={require("../img/fast_food.png")}
+        <View style={styles.top_notch}>
+          <TouchableOpacity
+            onPress={() => {
+              this.props.navigation.navigate("Home");
+            }}
+            style={styles.back_button}
+          >
+            <Icon
+              name="arrow-back"
+              size={26}
+              type="Ionicons"
+              container
+              color={"#FFF"}
+            />
+          </TouchableOpacity>
+          <Text style={styles.title}>Approve or Reject The Meals</Text>
+          <Text style={styles.title}>Based On their Info</Text>
+        </View>
+        <AnimatedLoader
+          visible={this.state.isLoading}
+          overlayColor="rgba(255,255,255,0.75)"
+          source={require("../components/animation/animation.json")}
+          speed={1}
+        ></AnimatedLoader>
+        {!this.state.isEmpty ? (
+          <FlatList
+            data={this.state.meals}
+            renderItem={({ item }) => (
+              <TouchableOpacity onPress={() => this.get_meal_by_pk(item.id)}>
+                <MealtItem title={item.name} />
+              </TouchableOpacity>
+            )}
+            keyExtractor={(item) =>
+              Math.floor(Math.random() * 99999).toString()
+            }
+            style={{
+              alignSelf: "center",
+              marginTop: width / 4,
+              top: 0,
+              maxHeight: height - width / 2 - 55,
+              width: width / 1.15,
+              backgroundColor: "rgba(101, 27, 98,0.2)",
+              paddingTop: 15,
+              paddingLeft: 10,
+              paddingRight: 10,
+            }}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.isRefresh}
+                onRefresh={() => this._getInfo()}
+              />
+            }
+          />
+        ) : (
+          <>
+            <Text
               style={{
-                height: 180,
-                width: 180,
-                top: -80,
-                justifyContent: "center",
-                left: width / 4,
+                alignSelf: "center",
+                marginTop: width / 2,
+                fontSize: 18,
+                fontWeight: "bold",
+                color: "#a8a8a8",
+              }}
+            >
+              There is no meals requests 😕
+            </Text>
+            <Image
+              source={require("../components/animation/empty.gif")}
+              style={{
+                width: 400,
+                height: 350,
+                alignSelf: "center",
+                // marginTop: width / 2,
               }}
             />
-          </View>
+          </>
+        )}
+
+        <View style={styles.bottom_notch}>
+          <Text style={[styles.title, { fontSize: 14 }]}>
+            Name : {Context._currentValue.user_info.first_name}{" "}
+            {Context._currentValue.user_info.last_name}
+          </Text>
+          <Text style={[styles.title, { fontSize: 14 }]}>
+            Role : {Context._currentValue.user_info.status}
+          </Text>
+          <Text style={[styles.title, { fontSize: 12, height: 25 }]}></Text>
+        </View>
+
+        <View style={styles.container}>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={this.state.modal_visiblity}
+            onRequestClose={() => {
+              Alert.alert("Modal has been closed.");
+              this.setState({ modal_visiblity: !modal_visiblity });
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalTextTitle}>
+                  {this.state.selected_meal.name}
+                </Text>
+                <View
+                  style={{
+                    borderBottomColor: "black",
+                    borderBottomWidth: 1,
+                    width: "100%",
+                  }}
+                />
+                <View style={{ alignSelf: "flex-start", width: "95%" }}>
+                  <View style={styles.content_container}>
+                    <Text style={[styles.textStyle, { color: "black" }]}>
+                      Carbohydrate :
+                    </Text>
+                    <Text style={[styles.textStyle, { color: "#545454" }]}>
+                      {this.state.selected_meal.carbohydrate}
+                    </Text>
+                  </View>
+                  <View style={styles.content_container}>
+                    <Text style={[styles.textStyle, { color: "black" }]}>
+                      Protien :
+                    </Text>
+                    <Text style={[styles.textStyle, { color: "#545454" }]}>
+                      {this.state.selected_meal.protein}
+                    </Text>
+                  </View>
+                  <View style={styles.content_container}>
+                    <Text style={[styles.textStyle, { color: "black" }]}>
+                      Fats :
+                    </Text>
+                    <Text style={[styles.textStyle, { color: "#545454" }]}>
+                      {this.state.selected_meal.fats}
+                    </Text>
+                  </View>
+
+                  <View style={[styles.content_container, { width: "60%" }]}>
+                    <Text style={[styles.textStyle, { color: "black" }]}>
+                      Recipe :
+                    </Text>
+                    <ScrollView style={{ maxHeight: 120 }}>
+                      <Text style={[styles.textStyle, { color: "#545454" }]}>
+                        {this.state.selected_meal.recipe}
+                      </Text>
+                    </ScrollView>
+                  </View>
+                </View>
+                <View style={styles.botton_continer}>
+                  <TouchableOpacity
+                    style={[styles.button, styles.buttonClose]}
+                    onPress={() =>
+                      this.setState({
+                        modal_visiblity: !this.state.modal_visiblity,
+                      })
+                    }
+                  >
+                    <Text style={styles.textStyle}>Close</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.button, styles.buttonClose]}
+                    onPress={() => this._changeMealStatus("Approved")}
+                  >
+                    <Text style={styles.textStyle}>Approve</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.button, styles.buttonClose]}
+                    onPress={() => this._changeMealStatus("Rejected")}
+                  >
+                    <Text style={styles.textStyle}>Reject</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
         </View>
         <DropdownAlert
           ref={(ref) => (this.dropDownAlertRef = ref)}
@@ -191,95 +309,23 @@ export default class extends Component {
   }
 }
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "white",
-    justifyContent: "center",
-  },
-  header: {
-    flex: 1,
-  },
-  profile_container: {
-    flex: 2,
-    // marginLeft: 10,
-  },
-  imageBackground: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    height: "100%",
-  },
-  title: {
-    color: "black",
-    fontWeight: "bold",
-  },
-  avatar_container: {
-    alignItems: "center",
-    top: "-29%",
-    position: "absolute",
-  },
-  avatar: {
-    borderRadius: 100,
-    height: 150,
-    width: 150,
-    // borderWidth: 10,
-    // borderColor: "rgba(101, 27, 98,0.6)",
-  },
-  Username: {
-    margin: 5,
-    fontSize: 20,
-  },
-  info_card: {
-    width: width - 25,
-    // height: height / 2.5,
-    marginTop: -50,
-    borderRadius: 20,
-    padding: 20,
-  },
-  card_title: {
-    fontSize: 18,
-    // color: "#ffffff",
-    fontWeight: "bold",
-    marginTop: 7,
-  },
-  card_title_input: {
-    fontSize: 15,
-    color: "#ffffff",
-    textAlign: "center",
-    color: "#f4d7f3",
-    width: "100%",
-  },
-  card_title_container: {
-    backgroundColor: common_styles.colors.TextInputContainerColor,
-    justifyContent: "center",
-    height: 45,
-    borderRadius: 10,
-    // padding: 10,
-    marginBottom: 8,
-    width: width - 160,
-    textAlign: "center",
-    justifyContent: "center",
-  },
-  card_title_row_container: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
   back_button: {
+    zIndex: 9999,
     margin: 10,
     top: 0,
     left: 0,
-    width: 40,
-    height: 40,
+    width: 30,
+    height: 30,
     position: "absolute",
-    backgroundColor: "rgba(101, 27, 98,0.6)",
+    backgroundColor: "rgba(161, 50, 157,0.6)",
     borderRadius: 40,
     justifyContent: "center",
+    color: "#FFF",
   },
   animation: {
     backgroundColor: "#93278f",
     paddingVertical: 10,
-    // marginTop: 30,
+    marginTop: 30,
     borderRadius: 100,
     justifyContent: "center",
     alignItems: "center",
@@ -289,9 +335,90 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     left: 15,
   },
-  textLogin: {
+  top_notch: {
+    top: 0,
+    position: "absolute",
+    backgroundColor: "rgba(100, 0, 120,0.71)",
+    height: width / 4,
+    width: "100%",
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+  },
+  bottom_notch: {
+    bottom: 0,
+    position: "absolute",
+    width: "100%",
+    //backgroundColor: "rgba(101, 27, 98,0.6)",
+    backgroundColor: "rgba(100, 0, 120,0.71)",
+
+    height: width / 4,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    flexDirection: "column",
+  },
+  modalView: {
+    marginLeft: 20,
+    marginRight: 20,
+    marginTop: height / 6,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 20,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    height: height / 2,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#B22AAE",
+    width: 80,
+  },
+  textStyle: {
     color: "white",
     fontWeight: "bold",
-    fontSize: 18,
+    textAlign: "center",
+  },
+  modalTextTitle: {
+    marginBottom: 15,
+    textAlign: "center",
+    fontSize: 28,
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  content_container: {
+    width: "50%",
+    justifyContent: "space-between",
+    flexDirection: "row",
+    margin: 10,
+  },
+  botton_continer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    position: "absolute",
+    bottom: 10,
+    width: "95%",
+  },
+  title: {
+    flex: 1,
+    color: "#FFFF",
+    fontSize: 22,
+    fontFamily: "sans-serif-medium",
+    alignSelf: "center",
+    textAlignVertical: "center",
   },
 });
