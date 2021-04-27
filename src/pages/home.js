@@ -24,6 +24,7 @@ const height = Dimensions.get("screen").height;
 const pages = [
   // { title: "Home", icon: "home", page: "Home" },
   { title: "Profile", icon: "fingerprint", page: "Profile" },
+  { title: "For Me", icon: "healing", page: "Suggestions" },
   { title: "Add Meal", icon: "library-add", page: "AddMeal" },
   { title: "create Meal", icon: "set-meal", page: "CreateMeal" },
 ];
@@ -100,10 +101,11 @@ export default class extends Component {
           <Text
             style={{
               color: "white",
-              fontWeight: "bold",
+              // fontWeight: "bold",
               fontSize: 20,
               padding: 10,
               marginTop: -40,
+              fontFamily: "Raleway",
             }}
           >
             We care about Your Health
@@ -111,7 +113,7 @@ export default class extends Component {
           <Text
             style={{
               color: "white",
-              fontWeight: "bold",
+              // fontWeight: "bold",
               fontSize: 20,
               padding: 10,
               marginTop: -20,

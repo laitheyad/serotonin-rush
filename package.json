@@ -8,6 +8,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@freakycoder/react-native-header-view": "^1.1.1",
     "@react-native-async-storage/async-storage": "^1.14.1",
     "@react-native-community/cli": "^4.13.1",
     "@react-navigation/compat": "^5.3.14",
@@ -23,14 +24,19 @@
     "react-native-animated-loader": "0.0.9",
     "react-native-animated-message": "^1.0.2",
     "react-native-animated-splash-screen": "^2.0.5",
+    "react-native-apple-header": "^0.1.1",
+    "react-native-classic-header": "^0.1.7",
     "react-native-cli": "^2.0.1",
     "react-native-dropdownalert": "^4.3.0",
     "react-native-elements": "^3.1.0",
     "react-native-flash-message": "^0.1.21",
     "react-native-gesture-handler": "~1.8.0",
+    "react-native-gorgeous-header": "^0.1.0",
     "react-native-linear-gradient": "^2.5.6",
     "react-native-modals": "^0.22.3",
+    "react-native-modern-header": "^0.1.0",
     "react-native-paper": "^4.7.2",
+    "react-native-profile-header": "^0.1.1",
     "react-native-ratings": "^7.3.0",
     "react-native-reanimated": "~1.13.0",
     "react-native-safe-area-context": "^3.1.9",
@@ -53,5 +59,10 @@
   "jest": {
     "preset": "react-native"
   },
-  "private": true
+  "private": true,
+  "rnpm": {
+    "assets": [
+      "assets/fonts/Raleway"
+    ]
+  }
 }

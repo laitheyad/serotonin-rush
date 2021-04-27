@@ -36,7 +36,6 @@ export default class extends Component {
             <Icon
               name={this.props.icon}
               size={34}
-              type="Materialicons"
               container
               color={"#ffffff"}
               style={styles.icon}

@@ -7,7 +7,7 @@ import AddMeal from "../pages/Add_meal";
 import CreateMeal from "../pages/create_meal";
 import Home from "../pages/home";
 import Approv from "../pages/approval";
-
+import Suggestions from "../pages/suggeestions";
 let screens = {
   Home: {
     screen: Home,
@@ -35,6 +35,12 @@ let screens = {
   },
   Approv: {
     screen: Approv,
+    navigationOptions: {
+      drawerLockMode: "locked-closed",
+    },
+  },
+  Suggestions: {
+    screen: Suggestions,
     navigationOptions: {
       drawerLockMode: "locked-closed",
     },

@@ -158,6 +158,7 @@ export default class extends Component {
             keyExtractor={(item) =>
               Math.floor(Math.random() * 99999).toString()
             }
+            initialNumToRender={30}
             style={{
               alignSelf: "center",
               marginTop: width / 4,
@@ -245,6 +246,14 @@ export default class extends Component {
                   </View>
                   <View style={styles.content_container}>
                     <Text style={[styles.textStyle, { color: "black" }]}>
+                      Calories :
+                    </Text>
+                    <Text style={[styles.textStyle, { color: "#545454" }]}>
+                      {this.state.selected_meal.calories}
+                    </Text>
+                  </View>
+                  <View style={styles.content_container}>
+                    <Text style={[styles.textStyle, { color: "black" }]}>
                       Protien :
                     </Text>
                     <Text style={[styles.textStyle, { color: "#545454" }]}>
@@ -317,7 +326,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     position: "absolute",
-    backgroundColor: "rgba(161, 50, 157,0.6)",
+    backgroundColor: "rgba(171, 0, 157,1)",
     borderRadius: 40,
     justifyContent: "center",
     color: "#FFF",
