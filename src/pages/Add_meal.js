@@ -100,10 +100,10 @@ export default class extends Component {
     var arr = await JSON.stringify(items);
     form.append("meals", arr);
 
-    // header.append("Authorization", "Token " + Context._currentValue.token);
+    header.append("Authorization", "Token " + Context._currentValue.token);
     var requestOptions = {
       method: "POST",
-      // headers: header,
+      headers: header,
       body: form,
       redirect: "follow",
     };

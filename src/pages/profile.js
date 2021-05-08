@@ -95,7 +95,6 @@ export default class extends Component {
 
   async _UpdateInfo() {
     var headers = new Headers();
-    // console.log(this.state.token);
     headers.append("Authorization", "Token " + this.state.token);
 
     var formdata = new FormData();
@@ -123,7 +122,6 @@ export default class extends Component {
         if (response.message === "success") {
           this._animation();
         }
-        // console.log(response);
       });
   }
   render() {

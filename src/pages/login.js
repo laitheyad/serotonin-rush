@@ -84,7 +84,6 @@ export default class Login extends React.Component {
     await fetch(Context._currentValue.ApiUrl + "/API/login/", requestOptions)
       .then((response) => response.text())
       .then(async (result) => {
-        console.log("response", result);
         let response = await JSON.parse(result);
 
         if (response.message === "success") {
@@ -121,12 +120,8 @@ export default class Login extends React.Component {
             position: "bottom",
           });
         }
-        // console.log(response);
       })
       .catch((error) => console.log("error", error));
-    // console.log("key : ", await AsyncStorage.getItem("isloggedIn"));
-    // console.log("username: ", this.state.username);
-    // console.log("password: ", this.state.password);
     isloggedin ? this._animation() : 0;
     const { navigation } = this.props;
     navigation.addListener("willFocus", () =>

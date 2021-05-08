@@ -166,7 +166,6 @@ export default class Register extends React.Component {
     )
       .then((response) => response.text())
       .then(async (result) => {
-        console.log("response", result);
         let response = await JSON.parse(result);
         if (response.message === "success") {
           showMessage({
@@ -193,7 +192,6 @@ export default class Register extends React.Component {
             position: "bottom",
           });
         }
-        // console.log(response);
       })
       .catch((error) =>
         showMessage({
@@ -209,9 +207,6 @@ export default class Register extends React.Component {
           position: "bottom",
         })
       );
-    // console.log("key : ", await AsyncStorage.getItem("isloggedIn"));
-    // console.log("username: ", this.state.username);
-    // console.log("password: ", this.state.password);
     isloggedin ? this._animation() : 0;
     const { navigation } = this.props;
     navigation.addListener("willFocus", () =>
@@ -400,36 +395,36 @@ export default class Register extends React.Component {
               />
               {this.state.typing_password ? this._typing() : null}
             </View>
-
-            <TouchableOpacity onPress={() => this._register()}>
-              <View style={styles.button_container}>
-                <Animated.View
-                  style={[
-                    styles.animation,
-                    {
-                      width,
-                    },
-                  ]}
-                >
-                  {this.state.enable ? (
-                    <Text style={styles.textLogin}>Register</Text>
-                  ) : (
-                    <Animatable.View animation="bounceIn" delay={50}>
-                      <FontAwesome name="check" color="white" size={20} />
-                    </Animatable.View>
-                  )}
-                </Animated.View>
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.signUp}
-              onPress={() => this.props.navigation.navigate("Login")}
-            >
-              <Text style={{ color: "black" }}>Already have account?</Text>
-              <Text style={{ color: "blue" }}> Sign in?</Text>
-            </TouchableOpacity>
           </ScrollView>
+
+          <TouchableOpacity onPress={() => this._register()}>
+            <View style={styles.button_container}>
+              <Animated.View
+                style={[
+                  styles.animation,
+                  {
+                    width,
+                  },
+                ]}
+              >
+                {this.state.enable ? (
+                  <Text style={styles.textLogin}>Register</Text>
+                ) : (
+                  <Animatable.View animation="bounceIn" delay={50}>
+                    <FontAwesome name="check" color="white" size={20} />
+                  </Animatable.View>
+                )}
+              </Animated.View>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.signUp}
+            onPress={() => this.props.navigation.navigate("Login")}
+          >
+            <Text style={{ color: "black" }}>Already have account?</Text>
+            <Text style={{ color: "blue" }}> Sign in?</Text>
+          </TouchableOpacity>
         </View>
         <DropdownAlert ref={(ref) => (this.dropDownAlertRef = ref)} />
         <FlashMessage position="top" />

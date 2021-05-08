@@ -30,12 +30,10 @@ const defaultState = {
   selected_meal: {},
   modal_visiblity: false,
   best: "",
-  error: true,
+  error: false,
   error_message: "",
 };
-const Meal = () => {
-  return <Text>Hllsdfsdfo</Text>;
-};
+
 export default class extends Component {
   constructor(props) {
     super(props);
@@ -57,9 +55,12 @@ export default class extends Component {
       .then((response) => response.text())
       .then(async (result) => {
         let response = await JSON.parse(result);
-        if (response.message == "error") {
+        if (response.message === "error") {
           this.dropDownAlertRef.alertWithType("fail", response.value);
-          return this.setState({ error: true, error_message: response.value });
+          return this.setState({
+            error: true,
+            error_message: response.value,
+          });
         }
         this.setState({ news: response.meals, best: response.best_for_you });
       });
@@ -124,7 +125,7 @@ export default class extends Component {
           {!this.state.error && (
             <View
               style={{
-                height: 70,
+                height: 80,
                 paddingLeft: 10,
                 paddingRight: 10,
                 margin: 10,
@@ -135,8 +136,15 @@ export default class extends Component {
               <Text style={[styles.title, { fontSize: 16 }]}>
                 Based on your records, the Best Component that helps you to be
                 happy is :{" "}
-                <Text style={{ fontSize: 18 }}>{this.state.best}, </Text>
-                Here is {this.state.news.length} meals that contains a high
+                <Text
+                  style={{
+                    fontSize: 18,
+                    backgroundColor: "rgb(161, 100, 157)",
+                  }}
+                >
+                  {this.state.best}
+                </Text>
+                , Here is {this.state.news.length} meals that contains a high
                 percentage of {this.state.best}
               </Text>
             </View>
