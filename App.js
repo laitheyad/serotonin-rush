@@ -32,7 +32,6 @@ export default class App extends React.Component {
         .then((response) => response.text())
         .then(async (result) => {
           try {
-            // console.log("result", result);
             let response = await JSON.parse(result);
             if (response.message === "success") {
               await AsyncStorage.setItem(

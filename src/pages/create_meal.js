@@ -107,7 +107,6 @@ export default class extends Component {
     // await fetch("http://192.168.43.72:8000/API/add_reaction/", requestOptions)
     //   .then((response) => response.text())
     //   .then(async (result) => {
-    //     console.log(result);
     //     let response = await JSON.parse(result);
     //     this.dropDownAlertRef.alertWithType(
     //       "success",
