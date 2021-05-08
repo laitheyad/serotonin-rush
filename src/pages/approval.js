@@ -150,14 +150,12 @@ export default class extends Component {
         {!this.state.isEmpty ? (
           <FlatList
             data={this.state.meals}
-            renderItem={({ item }) => (
+            renderItem={({ item, index }) => (
               <TouchableOpacity onPress={() => this.get_meal_by_pk(item.id)}>
                 <MealtItem title={item.name} />
               </TouchableOpacity>
             )}
-            keyExtractor={(item) =>
-              Math.floor(Math.random() * 99999).toString()
-            }
+            keyExtractor={(item) => item.id}
             initialNumToRender={30}
             style={{
               alignSelf: "center",

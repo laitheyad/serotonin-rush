@@ -2,6 +2,7 @@ import { createSwitchNavigator } from "react-navigation";
 import { createDrawerNavigator } from "react-navigation-drawer";
 import { AsyncStorage } from "react-native";
 import Login from "../pages/login";
+import Register from "../pages/register";
 import MainPage from "../pages/profile";
 import AddMeal from "../pages/Add_meal";
 import CreateMeal from "../pages/create_meal";
@@ -45,6 +46,12 @@ let screens = {
       drawerLockMode: "locked-closed",
     },
   },
+  Register: {
+    screen: Register,
+    navigationOptions: {
+      drawerLockMode: "locked-closed",
+    },
+  },
 };
 const MainNavigator = createDrawerNavigator(screens);
 
@@ -55,6 +62,7 @@ const Navigator = (signedin = false) => {
   return createSwitchNavigator(
     {
       Login: { screen: Login },
+      Register: { screen: Register },
       MainNavigator: { screen: MainNavigator }, // change this to DrawerNavigator
     },
     {

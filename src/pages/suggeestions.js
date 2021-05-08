@@ -14,6 +14,7 @@ const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
 import { Card, ListItem, Button, Icon } from "react-native-elements";
 import AnimatedLoader from "react-native-animated-loader";
+import DropdownAlert from "react-native-dropdownalert";
 
 const pages = [
   // { title: "Home", icon: "home", page: "Home" },
@@ -29,6 +30,8 @@ const defaultState = {
   selected_meal: {},
   modal_visiblity: false,
   best: "",
+  error: true,
+  error_message: "",
 };
 const Meal = () => {
   return <Text>Hllsdfsdfo</Text>;
@@ -38,15 +41,15 @@ export default class extends Component {
     super(props);
     this.state = { ...defaultState };
   }
-  async getNews() {
+  async _getSuggestions() {
     this.setState({ isFetching: true });
     let form = new FormData();
     form.append("token", Context._currentValue.token);
-
-    // // header.append("Authorization", "Token " + Context._currentValue.token);
+    let header = new Headers();
+    header.append("Authorization", "Token " + Context._currentValue.token);
     var requestOptions = {
       method: "POST",
-      // headers: header,
+      headers: header,
       body: form,
       redirect: "follow",
     };
@@ -54,6 +57,10 @@ export default class extends Component {
       .then((response) => response.text())
       .then(async (result) => {
         let response = await JSON.parse(result);
+        if (response.message == "error") {
+          this.dropDownAlertRef.alertWithType("fail", response.value);
+          return this.setState({ error: true, error_message: response.value });
+        }
         this.setState({ news: response.meals, best: response.best_for_you });
       });
     this.setState({ isFetching: false });
@@ -61,12 +68,17 @@ export default class extends Component {
 
   async componentDidMount() {
     this.setState({ token: Context._currentValue.token });
-    this.getNews();
+    this._getSuggestions();
   }
 
   render() {
     return (
       <SafeAreaView style={styles.page}>
+        <DropdownAlert
+          ref={(ref) => (this.dropDownAlertRef = ref)}
+          successColor={"#b038ac"}
+          successImageSrc={require("../img/check.png")}
+        />
         <View
           style={{
             position: "absolute",
@@ -93,60 +105,79 @@ export default class extends Component {
           />
         </TouchableOpacity>
         <ScrollView style={{ marginTop: 70 }}>
-          <View
-            style={{
-              height: 70,
-              paddingLeft: 10,
-              paddingRight: 10,
-              margin: 10,
-              backgroundColor: "rgb(161, 50, 157)",
-              borderRadius: 10,
-            }}
-          >
-            <Text style={[styles.title, { fontSize: 16 }]}>
-              Based on your records, the Best Component that helps you to be
-              happy is :{" "}
-              <Text style={{ fontSize: 18 }}>{this.state.best}, </Text>
-              Here is {this.state.news.length} meals that contains a high
-              percentage of {this.state.best}
-            </Text>
-          </View>
-          {this.state.news.map((meal, i) => {
-            return (
-              <Card
-                key={i}
-                style={{
-                  backgroundColor: "rgba(255,255,255,0.2)",
-                  borderRadius: 15,
-                }}
-              >
-                <Card.Title>{meal.name}</Card.Title>
-                <Card.Divider />
-                <Card.Image
-                  style={{ borderRadius: 15 }}
-                  source={require("../img/mael.jpeg")}
-                ></Card.Image>
-                <Text style={{ margin: 10 }}>{meal.recipe}</Text>
-                <Button
-                  icon={<Icon name="preview" color="#ffffff" />}
-                  buttonStyle={{
-                    borderRadius: 0,
-                    marginLeft: 0,
-                    marginRight: 0,
-                    marginBottom: 0,
-                    backgroundColor: "rgba(161, 50, 157,0.6)",
+          {this.state.error && (
+            <View
+              style={{
+                height: 70,
+                paddingLeft: 10,
+                paddingRight: 10,
+                margin: 10,
+                backgroundColor: "rgb(161, 50, 157)",
+                borderRadius: 10,
+              }}
+            >
+              <Text style={[styles.title, { fontSize: 16 }]}>
+                {this.state.error_message}
+              </Text>
+            </View>
+          )}
+          {!this.state.error && (
+            <View
+              style={{
+                height: 70,
+                paddingLeft: 10,
+                paddingRight: 10,
+                margin: 10,
+                backgroundColor: "rgb(161, 50, 157)",
+                borderRadius: 10,
+              }}
+            >
+              <Text style={[styles.title, { fontSize: 16 }]}>
+                Based on your records, the Best Component that helps you to be
+                happy is :{" "}
+                <Text style={{ fontSize: 18 }}>{this.state.best}, </Text>
+                Here is {this.state.news.length} meals that contains a high
+                percentage of {this.state.best}
+              </Text>
+            </View>
+          )}
+          {!this.state.error &&
+            this.state.news.map((meal, i) => {
+              return (
+                <Card
+                  key={i}
+                  style={{
+                    backgroundColor: "rgba(255,255,255,0.2)",
+                    borderRadius: 15,
                   }}
-                  title="VIEW NOW"
-                  onPress={() =>
-                    this.setState({
-                      modal_visiblity: true,
-                      selected_meal: meal,
-                    })
-                  }
-                />
-              </Card>
-            );
-          })}
+                >
+                  <Card.Title>{meal.name}</Card.Title>
+                  <Card.Divider />
+                  <Card.Image
+                    style={{ borderRadius: 15 }}
+                    source={require("../img/mael.jpeg")}
+                  ></Card.Image>
+                  <Text style={{ margin: 10 }}>{meal.recipe}</Text>
+                  <Button
+                    icon={<Icon name="preview" color="#ffffff" />}
+                    buttonStyle={{
+                      borderRadius: 0,
+                      marginLeft: 0,
+                      marginRight: 0,
+                      marginBottom: 0,
+                      backgroundColor: "rgba(161, 50, 157,0.6)",
+                    }}
+                    title="VIEW NOW"
+                    onPress={() =>
+                      this.setState({
+                        modal_visiblity: true,
+                        selected_meal: meal,
+                      })
+                    }
+                  />
+                </Card>
+              );
+            })}
         </ScrollView>
         <View style={styles.container}>
           <Modal

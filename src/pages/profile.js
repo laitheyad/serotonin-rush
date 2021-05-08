@@ -88,8 +88,9 @@ export default class extends Component {
     });
   }
   componentDidMount() {
-    const { navigation } = this.props;
-    navigation.addListener("willFocus", () => this._getInfo());
+    this._getInfo();
+    // const { navigation } = this.props;
+    // navigation.addListener("willFocus", () => this._getInfo());
   }
 
   async _UpdateInfo() {
@@ -150,6 +151,7 @@ export default class extends Component {
               />
             </TouchableOpacity>
           </ImageBackground>
+
           {/* <View
             style={{
               height: 200,
@@ -223,7 +225,9 @@ export default class extends Component {
               />
             )}
             <View>
-              <Text style={styles.Username}>Laith Al-Obaiyat</Text>
+              <Text style={styles.Username}>
+                {this.state.user_info.username}
+              </Text>
             </View>
             <KeyboardAvoidingView
               style={{ flex: 1 }}
@@ -399,8 +403,10 @@ const styles = StyleSheet.create({
     // borderColor: "rgba(101, 27, 98,0.6)",
   },
   Username: {
-    margin: 5,
+    marginTop: 5,
+    marginBottom: 10,
     fontSize: 20,
+    backgroundColor: "rgba(255, 180, 98,0.1)",
   },
   info_card: {
     width: width - 25,

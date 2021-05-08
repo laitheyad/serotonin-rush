@@ -5,7 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createAppContainer } from "react-navigation";
 import Context from "./src/context/globalSettings";
 import AnimatedSplash from "./src/components/animated-splash";
-import { ModalPortal } from 'react-native-modals';
+import { ModalPortal } from "react-native-modals";
 export default class App extends React.Component {
   state = { signedin: false, isLoading: true, token: "" };
   async componentDidMount() {
@@ -31,18 +31,26 @@ export default class App extends React.Component {
       )
         .then((response) => response.text())
         .then(async (result) => {
-          let response = await JSON.parse(result);
-          if (response.message === "success") {
-            await AsyncStorage.setItem("isCustomer", response.user_obj.status);
-            Context._currentValue.token = response.token;
-            Context._currentValue.user_info = response.user_obj;
-            Context._currentValue.username = response.username;
-          } else {
-            this.setState({ signedin: false });
+          try {
+            // console.log("result", result);
+            let response = await JSON.parse(result);
+            if (response.message === "success") {
+              await AsyncStorage.setItem(
+                "isCustomer",
+                response.user_obj.status
+              );
+              Context._currentValue.token = response.token;
+              Context._currentValue.user_info = response.user_obj;
+              Context._currentValue.username = response.username;
+            } else {
+              this.setState({ signedin: false });
+            }
+            setTimeout(() => {
+              this.setState({ isLoading: false });
+            }, 0);
+          } catch (e) {
+            this.props.navigation.navigate("Login");
           }
-          setTimeout(() => {
-            this.setState({ isLoading: false });
-          }, 0);
         });
     } else {
       this.setState({ isLoading: false });
@@ -64,9 +72,9 @@ export default class App extends React.Component {
       />
     ) : (
       <>
-      <ModalPortal />
-      <Nav />
-     </> 
+        <ModalPortal />
+        <Nav />
+      </>
     );
   }
 }

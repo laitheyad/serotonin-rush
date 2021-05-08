@@ -72,10 +72,10 @@ export default class Login extends React.Component {
   async _login() {
     let isloggedin = false;
     var formdata = new FormData();
-    // formdata.append("username", this.state.username);
-    // formdata.append("password", this.state.password);
-    formdata.append("username", "testuser");
-    formdata.append("password", "laith@31");
+    formdata.append("username", this.state.username);
+    formdata.append("password", this.state.password);
+    // formdata.append("username", "admin");
+    // formdata.append("password", "admin@31");
     var requestOptions = {
       method: "POST",
       body: formdata,
@@ -84,7 +84,9 @@ export default class Login extends React.Component {
     await fetch(Context._currentValue.ApiUrl + "/API/login/", requestOptions)
       .then((response) => response.text())
       .then(async (result) => {
+        console.log("response", result);
         let response = await JSON.parse(result);
+
         if (response.message === "success") {
           isloggedin = true;
           await AsyncStorage.setItem("isloggedIn", "true");
@@ -235,10 +237,15 @@ export default class Login extends React.Component {
             </View>
           </TouchableOpacity>
 
-          <View style={styles.signUp}>
+          <TouchableOpacity
+            style={styles.signUp}
+            onPress={() => {
+              this.props.navigation.navigate("Register");
+            }}
+          >
             <Text style={{ color: "black" }}>New user?</Text>
             <Text style={{ color: "blue" }}> Sign up?</Text>
-          </View>
+          </TouchableOpacity>
         </View>
         <DropdownAlert ref={(ref) => (this.dropDownAlertRef = ref)} />
         <FlashMessage position="top" />
