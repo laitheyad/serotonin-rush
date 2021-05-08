@@ -310,7 +310,7 @@ var styles = StyleSheet.create({
   },
   buttonClose: {
     backgroundColor: "#B22AAE",
-    width: 80,
+    width: "100%",
   },
   textStyle: {
     color: "white",
@@ -334,7 +334,6 @@ var styles = StyleSheet.create({
   },
   botton_continer: {
     flexDirection: "row",
-    justifyContent: "space-between",
     position: "absolute",
     bottom: 10,
     width: "95%",
