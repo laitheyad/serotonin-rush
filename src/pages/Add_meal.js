@@ -117,7 +117,7 @@ export default class extends Component {
         this.dropDownAlertRef.alertWithType(
           "success",
           "Success",
-          "reaction saved & can't be modified"
+          "your reaction has been saved seccussfully"
         );
       });
 

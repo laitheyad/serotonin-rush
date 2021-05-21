@@ -84,36 +84,23 @@ export default class extends Component {
       "The meal has been add, Waiting for the Nutritionist approval."
     );
 
-    // let selected = this.state.selectedItems;
-    // let items = [];
-    // for (let i = 0; i < selected.length; i++) {
-    //   await items.push(selected[i].id);
-    // }
+    var formdata = new FormData();
+    formdata.append("name", this.state.meal_info.meal_name);
+    formdata.append("carbohydrate", this.state.meal_info.carbohydrate);
+    formdata.append("fats", this.state.meal_info.fats);
+    formdata.append("calories", this.state.meal_info.calories);
+    formdata.append("recipe", this.state.meal_info.recipe);
+    formdata.append("protein", this.state.meal_info.protein);
 
-    // let header = new Headers();
-    // let form = new FormData();
-    // form.append("username", Context._currentValue.username);
-    // form.append("reaction", this.state.rating);
-    // var arr = await JSON.stringify(items);
-    // form.append("meals", arr);
+    var requestOptions = {
+      method: "POST",
+      body: formdata,
+      redirect: "follow",
+    };
 
-    // // header.append("Authorization", "Token " + Context._currentValue.token);
-    // var requestOptions = {
-    //   method: "POST",
-    //   // headers: header,
-    //   body: form,
-    //   redirect: "follow",
-    // };
-    // await fetch("http://192.168.43.72:8000/API/add_reaction/", requestOptions)
-    //   .then((response) => response.text())
-    //   .then(async (result) => {
-    //     let response = await JSON.parse(result);
-    //     this.dropDownAlertRef.alertWithType(
-    //       "success",
-    //       "Success",
-    //       "The meal has been add, Waiting for Nutirtion approval :)"
-    //     );
-    //   });
+    fetch(Context._currentValue.ApiUrl + "/create_meal/", requestOptions).catch(
+      (error) => console.log("error", error)
+    );
 
     this._animation();
   }

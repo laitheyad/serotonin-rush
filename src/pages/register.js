@@ -167,7 +167,7 @@ export default class Register extends React.Component {
       .then((response) => response.text())
       .then(async (result) => {
         let response = await JSON.parse(result);
-        if (response.message === "success") {
+        if (response.message === "User created") {
           showMessage({
             message: "User Registered seccssfuly",
             style: {
@@ -178,9 +178,10 @@ export default class Register extends React.Component {
             floating: true,
             animationDuration: 280,
           });
+          setTimeout(() => this.props.navigation.navigate("Home"), 1000);
         } else {
           showMessage({
-            message: "Ops",
+            message: "Ops !!",
             description: "Something went wrong",
             style: {
               backgroundColor: "#b038ac",
