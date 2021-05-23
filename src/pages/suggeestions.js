@@ -161,10 +161,20 @@ export default class extends Component {
                 >
                   <Card.Title>{meal.name}</Card.Title>
                   <Card.Divider />
-                  <Card.Image
-                    style={{ borderRadius: 15 }}
-                    source={require("../img/mael.jpeg")}
-                  ></Card.Image>
+                  {meal.img === null ? (
+                    <Card.Image
+                      style={{ borderRadius: 15 }}
+                      source={require("../img/mael.jpeg")}
+                    ></Card.Image>
+                  ) : (
+                    <Card.Image
+                      style={{ borderRadius: 15 }}
+                      source={{
+                        uri:
+                          Context._currentValue.ApiUrl + "/media/" + meal.img,
+                      }}
+                    ></Card.Image>
+                  )}
                   <Text style={{ margin: 10 }}>{meal.recipe}</Text>
                   <Button
                     icon={<Icon name="preview" color="#ffffff" />}
