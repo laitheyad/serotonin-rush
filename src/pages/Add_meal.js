@@ -1,3 +1,5 @@
+/** @format */
+
 import React, { Component, Fragment } from "react";
 import {
   View,
@@ -143,7 +145,10 @@ export default class extends Component {
         for (let i = 0; i < response.length; i++) {
           array.push({ id: response[i].pk, name: response[i].name });
         }
-        this.setState({ meals: array, isLoading: false });
+        setTimeout(
+          () => this.setState({ meals: array, isLoading: false }),
+          1000
+        );
       });
   }
   render() {

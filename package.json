@@ -32,6 +32,7 @@
     "react-native-flash-message": "^0.1.21",
     "react-native-gesture-handler": "~1.8.0",
     "react-native-gorgeous-header": "^0.1.0",
+    "react-native-image-picker": "^4.0.2",
     "react-native-linear-gradient": "^2.5.6",
     "react-native-modals": "^0.22.3",
     "react-native-modern-header": "^0.1.0",

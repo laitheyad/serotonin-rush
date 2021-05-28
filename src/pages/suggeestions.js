@@ -1,3 +1,5 @@
+/** @format */
+
 import React, { Component } from "react";
 import {
   View,
@@ -15,13 +17,6 @@ const height = Dimensions.get("screen").height;
 import { Card, ListItem, Button, Icon } from "react-native-elements";
 import AnimatedLoader from "react-native-animated-loader";
 import DropdownAlert from "react-native-dropdownalert";
-
-const pages = [
-  // { title: "Home", icon: "home", page: "Home" },
-  { title: "Profile", icon: "fingerprint", page: "Profile" },
-  { title: "Add Meal", icon: "library-add", page: "AddMeal" },
-  { title: "create Meal", icon: "set-meal", page: "CreateMeal" },
-];
 
 const defaultState = {
   token: "",
@@ -134,7 +129,7 @@ export default class extends Component {
               }}
             >
               <Text style={[styles.title, { fontSize: 16 }]}>
-                Based on your records, the Best Component that helps you to be
+                Based on your records, the Best Ingredient that helps you to be
                 happy is :{" "}
                 <Text
                   style={{

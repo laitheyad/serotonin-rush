@@ -1,3 +1,5 @@
+/** @format */
+
 import React, { Component, createContext } from "react";
 import {
   View,
@@ -19,8 +21,6 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import LinearGradient from "react-native-linear-gradient";
 import { Icon } from "react-native-elements";
 import common_styles from "../components/settings";
-import { showMessage, hideMessage } from "react-native-flash-message";
-import { ScrollView } from "react-native-gesture-handler";
 import Context from "../context/globalSettings";
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;

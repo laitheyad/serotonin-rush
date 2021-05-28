@@ -1,3 +1,5 @@
+/** @format */
+
 import React, { Component } from "react";
 import {
   View,
@@ -161,7 +163,7 @@ export default class extends Component {
               alignSelf: "center",
               marginTop: width / 4,
               top: 0,
-              maxHeight: height - width / 2 - 55,
+              maxHeight: height - width / 2 - 25,
               width: width / 1.15,
               backgroundColor: "rgba(101, 27, 98,0.2)",
               paddingTop: 15,

@@ -1,3 +1,5 @@
+/** @format */
+
 import React, { Component } from "react";
 import {
   View,
@@ -72,7 +74,7 @@ export default class extends Component {
     let flag = false;
     if (isCustomer !== "Customer") {
       page = {
-        title: "Add requet",
+        title: "Approval",
         icon: "playlist-add",
         page: "Approv",
       };
@@ -83,7 +85,7 @@ export default class extends Component {
       }
       if (!flag)
         pages.push({
-          title: "Add requet",
+          title: "Approval",
           icon: "playlist-add",
           page: "Approv",
         });
